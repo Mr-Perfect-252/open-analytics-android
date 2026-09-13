@@ -1,0 +1,12 @@
+{
+  "name": "open-analytics-android-server",
+  "version": "1.0.0",
+  "description": "Zero-dependency ingestion server for open-analytics-android (events + user crash reports).",
+  "type": "module",
+  "main": "ingest.js",
+  "scripts": {
+    "start": "node ingest.js"
+  },
+  "license": "MIT",
+  "author": "Mr-Perfect-252"
+}

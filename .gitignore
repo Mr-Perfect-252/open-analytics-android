@@ -1,0 +1,10 @@
+.gradle/
+build/
+local.properties
+*.iml
+.idea/
+.DS_Store
+captures/
+server/node_modules/
+server/events.jsonl
+server/crash-reports.jsonl
