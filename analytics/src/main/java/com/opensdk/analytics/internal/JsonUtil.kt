@@ -31,6 +31,10 @@ internal object JsonUtil {
         return arr
     }
 
+    /** Returns the string at [key], or null if absent or JSON null (Kotlin-null-safe). */
+    fun optStringOrNull(obj: JSONObject, key: String): String? =
+        if (obj.has(key) && !obj.isNull(key)) obj.getString(key) else null
+
     fun jsonToMap(obj: JSONObject): Map<String, Any?> {
         val out = LinkedHashMap<String, Any?>()
         val keys = obj.keys()

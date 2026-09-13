@@ -105,6 +105,6 @@ internal class Outbox(
         retryCount = o.getInt("retryCount"),
         nextRetryAt = o.getLong("nextRetryAt"),
         createdAt = o.getLong("createdAt"),
-        lastError = o.optString("lastError", null)
+        lastError = JsonUtil.optStringOrNull(o, "lastError")
     )
 }

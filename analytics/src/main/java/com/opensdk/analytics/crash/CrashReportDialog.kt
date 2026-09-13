@@ -28,7 +28,8 @@ internal object CrashReportDialog {
         val pad = (16 * context.resources.displayMetrics.density).toInt()
 
         val explanation = TextView(context).apply {
-            text = messagePrompt
+            val detail = report.message?.takeIf { it.isNotBlank() } ?: report.exceptionClass
+            text = "$messagePrompt\n\n($detail)"
             setPadding(0, 0, 0, pad / 2)
         }
 
