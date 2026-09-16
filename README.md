@@ -94,4 +94,10 @@ Events append to `events.jsonl`; crash reports append to `crash-reports.jsonl`.
 
 ## License
 
-MIT. Analytics schema and ingestion design credit: `open-sdk-analytics` by Sohan Ananthula.
+Android SDK
+Copyright (c) 2026 Sohan Ananthula. All rights reserved.
+
+This SDK is distributed under the Mozilla Public License, v. 2.0. 
+Any application integrating this SDK must retain the above copyright notice 
+and attribution to Sohan Ananthula within its open-source legal credits or 
+documentation.inserted Analytics schema and ingestion design credit: `open-sdk-analytics` by Sohan Ananthula.
