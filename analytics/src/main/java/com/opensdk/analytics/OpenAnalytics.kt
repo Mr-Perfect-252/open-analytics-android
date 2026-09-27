@@ -31,13 +31,13 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 
 /**
- * Public entry point for open-analytics-android — the Android equivalent of
- * open-sdk-analytics. Mirrors its API (init / track / identify / resetIdentity / flush)
- * and adds user-submitted crash reporting.
+ * Public entry point for the Apex analytics SDK. Talks to the **ApexHub backend only**.
+ * API: init / track / trackScreen / trackError / identify / resetIdentity / flush, plus
+ * user-submitted crash reporting.
  *
  * ```
  * OpenAnalytics.init(this, AnalyticsConfig(
- *     endpoint = "https://analytics.you.com/api/v1/track",
+ *     apiKey = "pk_live_…",     // your app's ApexHub public key
  *     appId = "my-app", debug = true
  * ))
  * OpenAnalytics.track("checkout_started", properties = mapOf("plan" to "pro"))
@@ -231,7 +231,7 @@ object OpenAnalytics {
     }
 
     private fun submitCrash(report: CrashReport) {
-        val url = config.crashReportEndpoint ?: deriveCrashEndpoint(config.endpoint)
+        val url = config.crashReportEndpoint
         val code = transport.postRaw(url, CrashSerializer.toJson(report).toString())
         if (code in 200..299) {
             crashStore.delete(report.crashId)
@@ -241,10 +241,6 @@ object OpenAnalytics {
             Log.d(config, "Crash submit failed ($code); keeping for retry.")
         }
     }
-
-    private fun deriveCrashEndpoint(trackEndpoint: String): String =
-        if (trackEndpoint.endsWith("/track")) trackEndpoint.removeSuffix("/track") + "/crash-report"
-        else trackEndpoint.trimEnd('/') + "/crash-report"
 
     // ---- internals ------------------------------------------------------
 

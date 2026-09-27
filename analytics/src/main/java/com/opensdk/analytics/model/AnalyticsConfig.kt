@@ -1,24 +1,20 @@
 package com.opensdk.analytics.model
 
 /**
- * Configuration for the analytics SDK. Mirrors `AnalyticsConfig` from
- * open-sdk-analytics, adapted for Android.
+ * Configuration for the Apex analytics SDK.
+ *
+ * This SDK talks to the **ApexHub backend only** — the ingestion endpoint is fixed
+ * (see [APEX_ENDPOINT]); there is no way to point it elsewhere. [apiKey] is your
+ * app's ApexHub public key (`pk_live_…`); it activates the SDK and attributes every
+ * event to your app. Events are ingested at `POST /api/v1/track` and crash reports at
+ * `POST /api/v1/crash-report`, both authenticated with that key.
  */
 data class AnalyticsConfig(
-    /** Target endpoint for tracking ingestion, e.g. "https://analytics.you.com/api/v1/track". */
-    val endpoint: String,
+    /** Your app's ApexHub public key, e.g. `pk_live_…`. Sent as `Authorization: Bearer`. */
+    val apiKey: String,
 
-    /**
-     * Endpoint that receives user-submitted crash reports.
-     * Defaults to sibling "/api/v1/crash-report" derived from [endpoint] when null.
-     */
-    val crashReportEndpoint: String? = null,
-
-    /** Application or project ID. */
+    /** Optional label for your own reference; attached to every event as `app_id`. */
     val appId: String? = null,
-
-    /** Optional bearer/API token sent as `Authorization`. */
-    val apiKey: String? = null,
 
     /** Extra headers to attach to every ingestion request. */
     val headers: Map<String, String> = emptyMap(),
@@ -55,5 +51,25 @@ data class AnalyticsConfig(
      * dialog letting the user describe what happened before submitting.
      * When false, the crash is submitted silently on next launch.
      */
-    val promptForCrashReport: Boolean = true
-)
+    val promptForCrashReport: Boolean = true,
+) {
+    /** Event ingestion endpoint — always the ApexHub backend. */
+    val endpoint: String get() = APEX_ENDPOINT
+
+    /** Crash-report endpoint — always the ApexHub backend. */
+    val crashReportEndpoint: String get() = APEX_CRASH_ENDPOINT
+
+    init {
+        require(apiKey.startsWith("pk_live_") || apiKey.startsWith("pk_test_")) {
+            "[ApexAnalytics] apiKey must start with 'pk_live_' or 'pk_test_'. Got: $apiKey"
+        }
+    }
+
+    companion object {
+        /** ApexHub event-ingestion endpoint. */
+        const val APEX_ENDPOINT = "https://apex-hub-production.vercel.app/api/v1/track"
+
+        /** ApexHub crash-report endpoint. */
+        const val APEX_CRASH_ENDPOINT = "https://apex-hub-production.vercel.app/api/v1/crash-report"
+    }
+}

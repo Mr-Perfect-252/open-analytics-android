@@ -10,10 +10,10 @@ class SampleApp : Application() {
         OpenAnalytics.init(
             this,
             AnalyticsConfig(
-                // Point this at your own backend (see server/ingest.js).
-                endpoint = "https://analytics.example.com/api/v1/track",
-                crashReportEndpoint = "https://analytics.example.com/api/v1/crash-report",
-                appId = "open-analytics-sample",
+                // Your app's ApexHub public key (Console → your app → Settings).
+                // The SDK always talks to the ApexHub backend; nothing else to configure.
+                apiKey = "pk_live_REPLACE_WITH_YOUR_KEY",
+                appId = "apex-analytics-sample",
                 debug = true,
                 promptForCrashReport = true
             )

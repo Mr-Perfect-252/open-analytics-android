@@ -1,13 +1,24 @@
-# open-analytics-android
+# Apex Analytics — Android
 
-An Android SDK for privacy-friendly, vendor-neutral product analytics — the Android
-equivalent of [`open-sdk-analytics`](https://www.npmjs.com/package/open-sdk-analytics)
-by **Sohan Ananthula**. Same event schema and self-hostable ingestion backend, plus a
-headline Android-only feature: **user-submitted crash reports**.
+The ApexHub Android analytics SDK (`io.github.mr-perfect-252:apex-analytics`).
+It sends sessions, screen views, custom events and user-submitted crash reports to
+**your ApexHub backend** — the endpoint is fixed, so there is nothing to self-host and
+nothing to misconfigure. Built by **Sohan Ananthula**.
 
+- **ApexHub-only** — `https://apex-hub-production.vercel.app/api/v1/track` and
+  `/api/v1/crash-report` are baked in.
+- **Activated by your app's key** — pass your `pk_live_…` ApexHub public key; every event
+  and crash report is attributed to your app.
 - **Zero third-party runtime dependencies** (Kotlin stdlib + Android framework + bundled `org.json`).
-- **Same wire format** as `open-sdk-analytics`, so one backend ingests both web and Android.
-- **Self-hostable** ingestion server included (`server/ingest.js`).
+
+## Install
+
+```kotlin
+dependencies {
+    implementation("io.github.mr-perfect-252:apex-analytics:1.0.0")
+}
+```
+
 
 ## Feature parity with `open-sdk-analytics`
 
@@ -37,11 +48,9 @@ The dialog is built programmatically (no XML/resources), so it works in any app.
 ```kotlin
 // Application.onCreate()
 OpenAnalytics.init(this, AnalyticsConfig(
-    endpoint = "https://analytics.yourdomain.com/api/v1/track",
-    crashReportEndpoint = "https://analytics.yourdomain.com/api/v1/crash-report",
-    appId = "my-app",
-    debug = true,
-    promptForCrashReport = true
+    apiKey = "pk_live_…",     // your app's ApexHub public key (required)
+    appId  = "my-app",        // optional label for your own reference
+    debug  = true
 ))
 
 // Anywhere
@@ -57,17 +66,16 @@ override fun onResume() {
 }
 ```
 
-If `crashReportEndpoint` is omitted, it is derived from `endpoint` by replacing the
-trailing `/track` with `/crash-report`.
+The endpoints are fixed to ApexHub — there is no `endpoint` parameter to pass. Sessions,
+screen views and cold-start timing are captured automatically.
 
 ## Configuration (`AnalyticsConfig`)
 
 | Field | Default | Purpose |
 |---|---|---|
-| `endpoint` | (required) | Event ingestion URL |
-| `crashReportEndpoint` | derived from `endpoint` | Crash-report URL |
-| `appId` | `null` | Project/app id attached to events |
-| `apiKey` | `null` | Sent as `Authorization: Bearer …` |
+| `apiKey` | (**required**) | Your app's `pk_live_…` ApexHub key — activates the SDK and attributes events |
+| `appId` | `null` | Label attached to events |
+| `endpoint` / `crashReportEndpoint` | fixed (ApexHub) | Not configurable — the SDK talks to ApexHub only |
 | `headers` | `{}` | Extra request headers |
 | `enabled` | `true` | Master on/off switch |
 | `debug` | `false` | Verbose logcat |
@@ -77,14 +85,11 @@ trailing `/track` with `/crash-report`.
 | `promptForCrashReport` | `true` | Prompt vs. silent crash submission |
 | `disableAutoScreenView` / `disableAutoCrashCapture` / `disableAutoPerformance` | `false` | Opt-outs |
 
-## Self-hosting the backend
+## Backend
 
-```bash
-cd server
-node ingest.js       # POST /api/v1/track and /api/v1/crash-report
-```
-
-Events append to `events.jsonl`; crash reports append to `crash-reports.jsonl`.
+Events and crash reports go to your ApexHub backend only. The `server/` directory holds a
+zero-dependency reference ingestion server kept for development, but the published SDK
+does not use it.
 
 ## Modules
 
